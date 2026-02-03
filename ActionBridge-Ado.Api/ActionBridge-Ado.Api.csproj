@@ -12,6 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.2" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.82.0" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.225.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="19.225.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
