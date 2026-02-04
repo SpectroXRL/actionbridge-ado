@@ -55,38 +55,38 @@ Before you begin, ensure you have the following installed:
 
 ### 1. Clone the Repository
 
-\`\`\`bash
+```
 git clone https://github.com/SpectroXRL/actionbridge-ado.git
 cd actionbridge-ado
-\`\`\`
+```
 
 ### 2. Backend Setup
 
 Navigate to the API project:
 
-\`\`\`bash
+```
 cd ActionBridge-Ado.Api
-\`\`\`
+```
 
 Restore .NET dependencies:
 
-\`\`\`bash
+```
 dotnet restore
-\`\`\`
+```
 
 ### 3. Frontend Setup
 
 Navigate to the client project:
 
-\`\`\`bash
+```
 cd ../ActionBridge-Ado.Client
-\`\`\`
+```
 
 Install npm dependencies:
 
-\`\`\`bash
+```
 npm install
-\`\`\`
+```
 
 ## ⚙️ Configuration
 
@@ -96,16 +96,16 @@ npm install
 
 Add your Azure OpenAI credentials to \`appsettings.Development.json\` or use User Secrets:
 
-\`\`\`bash
+```
 cd ActionBridge-Ado.Api
 dotnet user-secrets set "AzureOpenAI:Endpoint" "https://your-resource.openai.azure.com/"
 dotnet user-secrets set "AzureOpenAI:ApiKey" "your-api-key"
 dotnet user-secrets set "AzureOpenAI:DeploymentName" "your-deployment-name"
-\`\`\`
+```
 
-Or add to \`appsettings.Development.json\`:
+Or add to `appsettings.Development.json`:
 
-\`\`\`json
+```json
 {
   "AzureOpenAI": {
     "Endpoint": "https://your-resource.openai.azure.com/",
@@ -113,7 +113,7 @@ Or add to \`appsettings.Development.json\`:
     "DeploymentName": "your-deployment-name"
   }
 }
-\`\`\`
+```
 
 #### 2. Microsoft Entra ID Configuration
 
@@ -121,13 +121,13 @@ Configure authentication for Azure DevOps API access. You'll need to register an
 
 ### Frontend Configuration
 
-Create a \`.env\` file in the \`ActionBridge-Ado.Client\` directory:
+Create a `.env` file in the \`ActionBridge-Ado.Client\` directory:
 
-\`\`\`env
+```env
 VITE_ORGANIZATION=your-organization
 VITE_PROJECT=your-project-name
 VITE_ORGANIZATION_URL=https://dev.azure.com/your-organization
-\`\`\`
+```
 
 ## 🎯 Usage
 
@@ -135,27 +135,27 @@ VITE_ORGANIZATION_URL=https://dev.azure.com/your-organization
 
 #### 1. Start the Backend API
 
-\`\`\`bash
+```bash
 cd ActionBridge-Ado.Api
 dotnet run
-\`\`\`
+```
 
-The API will start on \`http://localhost:5277\`
+The API will start on `http://localhost:5277`
 
 #### 2. Start the Frontend
 
 In a new terminal:
 
-\`\`\`bash
+```bash
 cd ActionBridge-Ado.Client
 npm run dev
-\`\`\`
+```
 
-The frontend will start on \`http://localhost:5173\`
+The frontend will start on `http://localhost:5173`
 
 ### Using the Application
 
-1. **Open your browser** and navigate to \`http://localhost:5173\`
+1. **Open your browser** and navigate to `http://localhost:5173`
 2. **Upload a document** containing work items (transcript, notes, requirements doc)
 3. **Review AI-generated work items** - the AI will parse your document and extract:
    - Titles
@@ -170,7 +170,7 @@ The frontend will start on \`http://localhost:5173\`
 
 Your input document can be unstructured text. The AI will intelligently parse it:
 
-\`\`\`
+```
 Meeting Notes - Sprint Planning
 
 We need to implement user authentication:
@@ -181,7 +181,7 @@ We need to implement user authentication:
 High priority: Fix the bug where users can't submit forms on mobile devices
 
 Also need to add a new feature for exporting reports to PDF
-\`\`\`
+```
 
 The AI will generate appropriate work items with titles, descriptions, types, and priorities.
 
@@ -190,36 +190,36 @@ The AI will generate appropriate work items with titles, descriptions, types, an
 ### Endpoints
 
 #### File Upload
-\`\`\`
+```
 POST /api/file/upload
 Query Parameters:
   - organization: string
   - project: string
 Body: multipart/form-data with file
 Response: Array of WorkItemRequest objects
-\`\`\`
+```
 
 #### Get Projects
-\`\`\`
+```
 GET /api/ado/projects
 Query Parameters:
   - organizationUrl: string
 Response: Array of project objects
-\`\`\`
+```
 
 #### Create Work Items
-\`\`\`
+```
 POST /api/ado/workitems
 Query Parameters:
   - organizationUrl: string
   - project: string
 Body: Array of WorkItemRequest objects
 Response: Created work items with IDs and URLs
-\`\`\`
+```
 
 ### Work Item Request Schema
 
-\`\`\`json
+```
 {
   "Title": "string",
   "Description": "string",
@@ -228,44 +228,44 @@ Response: Created work items with IDs and URLs
   "Priority": 1 | 2 | 3 | 4,
   "AssignedTo": "string (optional)"
 }
-\`\`\`
+```
 
 ## 🛠️ Development
 
 ### Backend Development
 
 Build the API:
-\`\`\`bash
+```bash
 cd ActionBridge-Ado.Api
 dotnet build
-\`\`\`
+```
 
 Run tests (if available):
-\`\`\`bash
+```
 dotnet test
-\`\`\`
+```
 
 ### Frontend Development
 
 Lint the code:
-\`\`\`bash
+```
 cd ActionBridge-Ado.Client
 npm run lint
-\`\`\`
+```
 
 Build for production:
-\`\`\`bash
+```
 npm run build
-\`\`\`
+```
 
 Preview production build:
-\`\`\`bash
+```
 npm run preview
-\`\`\`
+```
 
 ### Project Structure
 
-\`\`\`
+```
 actionbridge-ado/
 ├── ActionBridge-Ado.Api/          # .NET Web API
 │   ├── Endpoints/                 # API endpoint definitions
@@ -290,7 +290,7 @@ actionbridge-ado/
 │   ├── package.json
 │   └── vite.config.ts
 └── README.md
-\`\`\`
+```
 
 ## 🔒 Security Considerations
 
