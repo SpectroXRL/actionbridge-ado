@@ -23,15 +23,7 @@ public static class FileEndpoints
             using var stream = file.OpenReadStream();
             var workItems = await aiService.ParseFileToWorkItemsAsync(stream, file.FileName);
 
-            // var results = new List<string>();
-            // foreach (var workItem in workItems)
-            // {
-            //     var result = await adoService.CreateWorkItemAsync(organization, project, workItem);
-            //     results.Add(result);
-            // }
-
-            // return Results.Ok(new { message = $"Created {results.Count} work items", workItems = results });
-            return Results.Ok();
+            return TypedResults.Created(string.Empty, workItems);
         }).DisableAntiforgery(); ;
     }
 }

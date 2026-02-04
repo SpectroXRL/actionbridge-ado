@@ -1,10 +1,13 @@
 using ActionBridge_Ado.Api;
 using ActionBridge_Ado.Api.Endpoints;
+using ActionBridge_Ado.Api.Models;
 using ActionBridge_Ado.Api.Services.Ado;
 using ActionBridge_Ado.Api.Services.AI;
 using ActionBridge_Ado.Api.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<AzureOpenAIOptions>(builder.Configuration.GetSection("AzureOpenAI"));
 
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IAuthService, AuthService>();
