@@ -9,7 +9,8 @@ public static class AdoEndpoints
 {
     public static void MapAdoEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/api/ado");
+        var group = app.MapGroup("/api/ado")
+            .RequireAuthorization();
 
         group.MapGet("/projects", async (
             [FromQuery] string organizationUrl,

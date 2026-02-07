@@ -4,8 +4,17 @@ using ActionBridge_Ado.Api.Models;
 using ActionBridge_Ado.Api.Services.Ado;
 using ActionBridge_Ado.Api.Services.AI;
 using ActionBridge_Ado.Api.Services.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<AzureOpenAIOptions>(builder.Configuration.GetSection("AzureOpenAI"));
 
@@ -32,6 +41,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowReactApp");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapFileEndpoints();
 app.MapAdoEndpoints();
