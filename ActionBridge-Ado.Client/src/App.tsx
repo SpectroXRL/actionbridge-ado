@@ -2,6 +2,13 @@ import { useState, type FormEvent } from "react";
 import WorkItemsForm from "./components/WorkItemsForm";
 import type { WorkItemRequest } from "./types/WorkItemRequest";
 import "./App.css";
+import { useApi } from "./utils/useApi";
+import {
+  AuthenticatedTemplate,
+  UnauthenticatedTemplate,
+} from "@azure/msal-react";
+import { SignInButton } from "./components/SignInButton";
+import { UserProfile } from "./components/UserProfile";
 
 const App = () => {
   const [workItems, setWorkItems] = useState<WorkItemRequest[]>([]);
@@ -9,6 +16,8 @@ const App = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
+
+  const { getAccessToken } = useApi();
 
   const organization = import.meta.env.VITE_ORGANIZATION;
   const project = import.meta.env.VITE_PROJECT;
@@ -24,10 +33,15 @@ const App = () => {
     const formData = new FormData(form);
 
     try {
+      const token = await getAccessToken();
+
       const response = await fetch(
         `http://localhost:5277/api/file/upload?organization=${encodeURIComponent(organization)}&project=${encodeURIComponent(project)}`,
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           body: formData,
         },
       );
@@ -58,11 +72,14 @@ const App = () => {
     setIsError(false);
 
     try {
+      const token = await getAccessToken();
+
       const response = await fetch(
         `http://localhost:5277/api/ado/workitems?organizationUrl=${encodeURIComponent(organizationUrl)}&project=${encodeURIComponent(project)}`,
         {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(workItems),
@@ -91,32 +108,48 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <h1>ActionBridge - Azure DevOps Work Item Generator</h1>
+      <header className="app-header">
+        <h1>ActionBridge - Azure DevOps Work Item Generator</h1>
+        <AuthenticatedTemplate>
+          <UserProfile />
+        </AuthenticatedTemplate>
+        <UnauthenticatedTemplate>
+          <SignInButton />
+        </UnauthenticatedTemplate>
+      </header>
 
-      <form onSubmit={handleFileUpload} className="upload-form">
-        <input
-          type="file"
-          id="txtfile"
-          name="file"
-          accept=".txt,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      <AuthenticatedTemplate>
+        <form onSubmit={handleFileUpload} className="upload-form">
+          <input
+            type="file"
+            id="txtfile"
+            name="file"
+            accept=".txt,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          />
+          <button type="submit" disabled={isUploading}>
+            {isUploading ? "Processing..." : "Upload & Generate Work Items"}
+          </button>
+        </form>
+
+        {message && (
+          <div className={`message ${isError ? "error" : "success"}`}>
+            {message}
+          </div>
+        )}
+
+        <WorkItemsForm
+          workItems={workItems}
+          setWorkItems={setWorkItems}
+          onSubmit={handleCreateWorkItems}
+          isSubmitting={isSubmitting}
         />
-        <button type="submit" disabled={isUploading}>
-          {isUploading ? "Processing..." : "Upload & Generate Work Items"}
-        </button>
-      </form>
+      </AuthenticatedTemplate>
 
-      {message && (
-        <div className={`message ${isError ? "error" : "success"}`}>
-          {message}
+      <UnauthenticatedTemplate>
+        <div className="login-prompt">
+          <p>Please sign in with your Microsoft account to continue.</p>
         </div>
-      )}
-
-      <WorkItemsForm
-        workItems={workItems}
-        setWorkItems={setWorkItems}
-        onSubmit={handleCreateWorkItems}
-        isSubmitting={isSubmitting}
-      />
+      </UnauthenticatedTemplate>
     </div>
   );
 };

@@ -1,11 +1,24 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { router } from "./routes.tsx";
-import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./components/AuthProvider.tsx";
+import App from "./App.tsx";
+import { msalInstance } from "./utils/authConfig.ts";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+msalInstance.initialize().then(async () => {
+  await msalInstance.handleRedirectPromise().catch((error) => {
+    console.error("Redirect error:", error);
+  });
+
+  if (window.opener && window.opener !== window) {
+    return;
+  }
+
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </StrictMode>,
+  );
+});
