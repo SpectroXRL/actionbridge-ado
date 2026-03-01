@@ -1,10 +1,15 @@
-import type { WorkItemRequest } from "../types/WorkItemRequest";
+import { useState } from "react";
+import type { WorkItemRequest } from "../../types/WorkItemRequest";
+import { useApi } from "../../utils/useApi";
+
+const project = import.meta.env.VITE_PROJECT;
+const organizationUrl = import.meta.env.VITE_ORGANIZATION_URL;
 
 interface WorkItemsFormProps {
   workItems: WorkItemRequest[];
   setWorkItems: React.Dispatch<React.SetStateAction<WorkItemRequest[]>>;
-  onSubmit: () => void;
-  isSubmitting: boolean;
+  setMessage: (message: string | null) => void;
+  setIsError: (isError: boolean) => void;
 }
 
 const workItemTypes = ["Task", "Epic", "Issue"] as const;
@@ -18,9 +23,53 @@ const priorities = [
 const WorkItemsForm = ({
   workItems,
   setWorkItems,
-  onSubmit,
-  isSubmitting,
+  setMessage,
+  setIsError,
 }: WorkItemsFormProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { getAccessToken } = useApi();
+
+  const handleCreateWorkItems = async () => {
+    setIsSubmitting(true);
+    setMessage(null);
+    setIsError(false);
+
+    try {
+      const token = await getAccessToken();
+
+      const response = await fetch(
+        `http://localhost:5277/api/ado/workitems?organizationUrl=${encodeURIComponent(organizationUrl)}&project=${encodeURIComponent(project)}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(workItems),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to create work items");
+      }
+
+      const result = await response.json();
+      setMessage(
+        `Successfully created ${result.count} work items in Azure DevOps!`,
+      );
+      setIsError(false);
+      setWorkItems([]);
+    } catch (error) {
+      setMessage(
+        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+      setIsError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const updateWorkItem = (
     index: number,
     field: keyof WorkItemRequest,
@@ -178,7 +227,7 @@ const WorkItemsForm = ({
         </button>
         <button
           type="button"
-          onClick={onSubmit}
+          onClick={handleCreateWorkItems}
           disabled={isSubmitting}
           className="submit-btn"
         >

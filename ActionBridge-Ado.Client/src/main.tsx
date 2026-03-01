@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { AuthProvider } from "./components/AuthProvider.tsx";
+import { AuthProvider } from "./components/auth/AuthProvider.tsx";
 import App from "./App.tsx";
 import { msalInstance } from "./utils/authConfig.ts";
 
