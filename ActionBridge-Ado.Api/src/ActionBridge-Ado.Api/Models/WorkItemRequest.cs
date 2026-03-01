@@ -1,4 +1,4 @@
-﻿namespace ActionBridge_Ado.Api;
+﻿namespace ActionBridge_Ado.Api.Models;
 
 public class WorkItemRequest
 {
