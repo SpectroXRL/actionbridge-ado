@@ -4,7 +4,7 @@ import {
   type EventMessage,
   type AuthenticationResult,
 } from "@azure/msal-browser";
-import { msalInstance } from "../utils/authConfig";
+import { msalInstance } from "../../utils/authConfig";
 import type { ReactNode } from "react";
 
 // Set active account on login
