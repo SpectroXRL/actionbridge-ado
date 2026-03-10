@@ -1,5 +1,4 @@
-﻿
-using System.Text.Json;
+﻿using System.Text.Json;
 using ActionBridge_Ado.Api.Models;
 using Azure;
 using Azure.AI.OpenAI;
