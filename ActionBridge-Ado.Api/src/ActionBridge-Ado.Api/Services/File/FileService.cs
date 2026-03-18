@@ -1,4 +1,4 @@
-using ActionBridge_Ado.Api.Services.FIle;
+using ActionBridge_Ado.Api.Services.File;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 

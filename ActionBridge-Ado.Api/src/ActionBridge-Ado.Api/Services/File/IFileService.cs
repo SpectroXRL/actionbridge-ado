@@ -1,6 +1,6 @@
 using ActionBridge_Ado.Api.Models;
 
-namespace ActionBridge_Ado.Api.Services.FIle;
+namespace ActionBridge_Ado.Api.Services.File;
 
 public interface IFileService
 {

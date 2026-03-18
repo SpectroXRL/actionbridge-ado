@@ -20,12 +20,18 @@ public class AIService : IAIService
             new AzureKeyCredential(_options.ApiKey));
     }
 
-    public async Task<List<WorkItemRequest>> ParseFileToWorkItemsAsync(Stream fileStream, string fileName)
+    public async Task<List<WorkItemRequest>> ProcessChunksAsync(List<string> chunks)
     {
-        // Read file content
-        using var reader = new StreamReader(fileStream);
-        var fileContent = await reader.ReadToEndAsync();
+        // Process all chunks in parallel
+        var tasks = chunks.Select(chunk => ParseChunkAsync(chunk));
+        var results = await Task.WhenAll(tasks);
 
+        // Flatten results: List<List<WorkItemRequest>> → List<WorkItemRequest>
+        return results.SelectMany(r => r).ToList();
+    }
+
+    private async Task<List<WorkItemRequest>> ParseChunkAsync(string content)
+    {
         var chatClient = _client.GetChatClient(_options.DeploymentName);
 
         var systemPrompt = @"
@@ -42,7 +48,7 @@ Each work item should have:
 
 Return a JSON object with a 'workItems' array.";
 
-        var userPrompt = $"File name: {fileName}\n\nContent:\n{fileContent}";
+        var userPrompt = $"\n\nContent:\n{content}";
 
         var messages = new List<ChatMessage>
         {
