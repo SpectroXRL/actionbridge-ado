@@ -1,6 +1,6 @@
 namespace ActionBridge_Ado.Api.Services.Chunker;
 
-public class TranscriptChunker
+public class TranscriptChunker : ITranscriptChunker
 {
     public List<string> Chunk(string content, int targetTokens, int overlapTokens = 0)
     {

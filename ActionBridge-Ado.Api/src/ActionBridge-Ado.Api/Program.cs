@@ -3,6 +3,8 @@ using ActionBridge_Ado.Api.Endpoints;
 using ActionBridge_Ado.Api.Models;
 using ActionBridge_Ado.Api.Services.Ado;
 using ActionBridge_Ado.Api.Services.AI;
+using ActionBridge_Ado.Api.Services.File;
+using ActionBridge_Ado.Api.Services.Chunker;
 using ActionBridge_Ado.Api.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -21,6 +23,8 @@ builder.Services.Configure<AzureOpenAIOptions>(builder.Configuration.GetSection(
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAIService, AIService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<ITranscriptChunker, TranscriptChunker>();
 builder.Services.AddScoped<IAdoService, AdoService>();
 
 builder.Services.AddCors(options =>
