@@ -32,4 +32,12 @@ public class FileService : IFileService
 
         return string.Join(Environment.NewLine, paragraphs);
     }
+
+    public async Task<string> ReadContentAsync(Stream fileStream)
+    {
+        using var reader = new StreamReader(fileStream);
+        var fileContent = await reader.ReadToEndAsync();
+
+        return fileContent;
+    }
 }

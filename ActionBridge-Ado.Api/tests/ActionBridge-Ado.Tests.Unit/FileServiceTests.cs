@@ -1,9 +1,12 @@
-﻿using ActionBridge_Ado.Api.Services.File;
+﻿using System.Security.Cryptography;
+using System.Text;
+using ActionBridge_Ado.Api.Services.File;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace ActionBridge_Ado.Tests.Unit;
 
@@ -47,5 +50,35 @@ public class FileServiceTests
         }
         stream.Position = 0;
         return stream;
+    }
+
+    [Fact]
+    public async Task ReadContent_WhenStreamHasContent_ReturnsContentAsString()
+    {
+        // Arrange
+        var fileService = new FileService();
+        var content = "This is some test content";
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));  // How would you create a stream from a string?
+
+        // Act
+        var result = await fileService.ReadContentAsync(stream);
+
+        // Assert
+        result.Should().Be(content);
+    }
+
+    [Fact]
+    public async Task ReadContent_WhenStreamIsEmpty_ReturnsEmptyString()
+    {
+        // Arrange
+        var fileService = new FileService();
+        var content = "";
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));  // How would you create a stream from a string?
+
+        // Act
+        var result = await fileService.ReadContentAsync(stream);
+
+        // Assert
+        result.Should().Be(string.Empty);
     }
 }

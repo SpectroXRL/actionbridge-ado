@@ -6,4 +6,5 @@ public interface IFileService
 {
     bool IsValidExtension(string fileName);
     string ProcessDocx(Stream fileStream);
+    Task<string> ReadContentAsync(Stream fileStream);
 }

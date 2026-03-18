@@ -34,11 +34,6 @@ public class TranscriptChunkerTests
         var result = chunker.Chunk(content, targetTokens, overlapTokens);
 
         // Assert
-        // 🤔 YOUR TURN: What should happen here?
-        // 
-        // Think about: stepSize = targetTokens - overlapTokens = 5 - 5 = 0
-        // A step size of 0 means... what happens in your loop?
-        // What SHOULD the behavior be to avoid infinite loop or crash?
         result.Should().HaveCount(0);
     }
 
@@ -54,11 +49,6 @@ public class TranscriptChunkerTests
         var result = chunker.Chunk(content, targetTokens);
 
         // Assert
-        // 🤔 YOUR TURN: What should an empty string return?
-        // 
-        // Think about: content.Split(' ') on "" gives what?
-        // Should we return an empty list? A list with one empty string?
-        // What would be most useful for the caller (AIService)?
         result.Should().HaveCount(0);
     }
 
@@ -71,7 +61,7 @@ public class TranscriptChunkerTests
         // Create content that's clearly larger than target
         // If we assume ~1 token per word, 10 words ≈ 10 tokens
         var content = "one two three four five six seven eight nine ten";
-        var targetTokens = 5;  // Force a split
+        var targetTokens = 5;
 
         // Act
         var result = chunker.Chunk(content, targetTokens);
@@ -95,8 +85,6 @@ public class TranscriptChunkerTests
         var result = chunker.Chunk(content, targetTokens, overlapTokens);
 
         // Assert
-        // What should result contain?
-        // Think about: How many chunks? What's in each?
         result.Should().HaveCountGreaterThan(1);
         result[0].Should().Be("one two three four five");
         result[1].Should().Be("four five six seven eight");
