@@ -2,12 +2,20 @@ namespace ActionBridge_Ado.Api.Services.Chunker;
 
 public class TranscriptChunker : ITranscriptChunker
 {
+    private readonly ILogger<TranscriptChunker> _logger;
+
+    public TranscriptChunker(ILogger<TranscriptChunker> logger)
+    {
+        _logger = logger;
+    }
+
     public List<string> Chunk(string content, int targetTokens, int overlapTokens = 0)
     {
         int stepSize = targetTokens - overlapTokens;
 
         if (stepSize == 0 || overlapTokens > targetTokens || content == "")
         {
+            _logger.LogWarning("Chunk failed with StepSize: {StepSize}; ContentLength: {ContentLength}", stepSize, content.Length);
             return new List<string>();
         }
 

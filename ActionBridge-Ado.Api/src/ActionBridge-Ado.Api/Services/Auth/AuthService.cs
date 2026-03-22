@@ -7,11 +7,13 @@ public class AuthService : IAuthService
 {
     private readonly IConfiguration _config;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(IConfiguration config, IHttpContextAccessor httpContextAccessor)
+    public AuthService(IConfiguration config, IHttpContextAccessor httpContextAccessor, ILogger<AuthService> logger)
     {
         _config = config;
         _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
     }
 
     public async Task<string> GetAccessTokenAsync()
@@ -26,6 +28,7 @@ public class AuthService : IAuthService
 
         if (string.IsNullOrEmpty(userToken))
         {
+            _logger.LogWarning("No user token provided");
             throw new UnauthorizedAccessException("No user token provided");
         }
 
@@ -43,11 +46,12 @@ public class AuthService : IAuthService
             var result = await app.AcquireTokenOnBehalfOf(scopes, new UserAssertion(userToken))
                 .ExecuteAsync();
 
+            _logger.LogInformation("Successfully received access token");
             return result.AccessToken;
         }
         catch (MsalException ex)
         {
-            Console.WriteLine($"Token exchange failed: {ex.Message}");
+            _logger.LogError(ex, "Token exchange failed");
             throw;
         }
     }

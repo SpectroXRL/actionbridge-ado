@@ -6,10 +6,11 @@ namespace ActionBridge_Ado.Api.Services.File;
 
 public class FileService : IFileService
 {
+    private readonly ILogger<FileService> _logger;
     private static readonly string[] AllowedExtensions = [".txt", ".docx", ".vtt"];
-    public FileService()
+    public FileService(ILogger<FileService> logger)
     {
-
+        _logger = logger;
     }
 
     public bool IsValidExtension(string fileName)
@@ -25,11 +26,13 @@ public class FileService : IFileService
 
         if (body == null)
         {
+            _logger.LogDebug("Docx was empty");
             return string.Empty;
         }
 
         var paragraphs = body.Elements<Paragraph>().Select(p => p.InnerText);
 
+        _logger.LogInformation("Word Document processed with {ParagraphCount} paragraphs", paragraphs.Count());
         return string.Join(Environment.NewLine, paragraphs);
     }
 
@@ -38,6 +41,7 @@ public class FileService : IFileService
         using var reader = new StreamReader(fileStream);
         var fileContent = await reader.ReadToEndAsync();
 
+        _logger.LogInformation("Content of length {ContentLength} read", fileStream.Length);
         return fileContent;
     }
 }

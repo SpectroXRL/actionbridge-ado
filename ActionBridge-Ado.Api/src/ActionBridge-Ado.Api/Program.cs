@@ -8,6 +8,11 @@ using ActionBridge_Ado.Api.Services.Chunker;
 using ActionBridge_Ado.Api.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +41,56 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+if (builder.Environment.IsProduction())
+{
+    var OtlpEndpoint = builder.Configuration["Grafana:OtlpEndpoint"];
+    builder.Logging.AddOpenTelemetry(options =>
+    {
+        options
+            .AddOtlpExporter(options =>
+                {
+                    options.Endpoint = new Uri($"{OtlpEndpoint}/v1/logs");
+                    options.Headers = builder.Configuration["Grafana:OtlpHeaders"];
+                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                });
+    });
+    builder.Services.AddOpenTelemetry()
+          .ConfigureResource(resource => resource.AddService(builder.Configuration["Grafana:ServiceName"]!))
+          .WithTracing(tracing => tracing
+              .AddAspNetCoreInstrumentation()
+              .AddOtlpExporter(options =>
+                {
+                    options.Endpoint = new Uri($"{OtlpEndpoint}/v1/traces");
+                    options.Headers = builder.Configuration["Grafana:OtlpHeaders"];
+                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                }))
+          .WithMetrics(metrics => metrics
+              .AddAspNetCoreInstrumentation()
+              .AddOtlpExporter(options =>
+                {
+                    options.Endpoint = new Uri($"{OtlpEndpoint}/v1/metrics");
+                    options.Headers = builder.Configuration["Grafana:OtlpHeaders"];
+                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                }));
+}
+else
+{
+    var OtlpEndpoint = builder.Configuration["Grafana:OtlpEndpoint"];
+    builder.Logging.AddOpenTelemetry(options =>
+    {
+        options
+            .AddConsoleExporter();
+    });
+    // builder.Services.AddOpenTelemetry()
+    //       .ConfigureResource(resource => resource.AddService(builder.Configuration["Grafana:ServiceName"]!))
+    //       .WithTracing(tracing => tracing
+    //           .AddAspNetCoreInstrumentation()
+    //           .AddConsoleExporter())
+    //       .WithMetrics(metrics => metrics
+    //           .AddAspNetCoreInstrumentation()
+    //           .AddConsoleExporter());
+}
 
 var app = builder.Build();
 
