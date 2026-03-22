@@ -7,7 +7,6 @@ namespace ActionBridge_Ado.Api.Services.Ado;
 
 public interface IAdoService
 {
-    Task<List<WorkItem>> CreateWorkItemsAsync(string organizationUrl, string project, List<WorkItemRequest> workItem, VssOAuthAccessTokenCredential credentials);
     Task<WorkItemBatchResponse> CreateWorkItemsBatchAsync(string organizationUrl, string project, List<WorkItemRequest> workItems);
     Task<IEnumerable<TeamProjectReference>> GetProjectsAsync(string organizationUrl);
 }

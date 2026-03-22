@@ -9,28 +9,33 @@ namespace ActionBridge_Ado.Api.Services.AI;
 
 public class AIService : IAIService
 {
+    private readonly ILogger<AIService> _logger;
     private readonly AzureOpenAIOptions _options;
     private readonly AzureOpenAIClient _client;
 
-    public AIService(IOptions<AzureOpenAIOptions> options)
+    public AIService(IOptions<AzureOpenAIOptions> options, ILogger<AIService> logger)
     {
         _options = options.Value;
         _client = new AzureOpenAIClient(
             new Uri(_options.Endpoint),
             new AzureKeyCredential(_options.ApiKey));
+        _logger = logger;
     }
 
     public async Task<List<WorkItemRequest>> ProcessChunksAsync(List<string> chunks)
     {
         // Process all chunks in parallel
-        var tasks = chunks.Select(chunk => ParseChunkAsync(chunk));
+        var tasks = chunks.Select((chunk, index) => ParseChunkAsync(chunk, index));
         var results = await Task.WhenAll(tasks);
 
         // Flatten results: List<List<WorkItemRequest>> → List<WorkItemRequest>
-        return results.SelectMany(r => r).ToList();
+        var workItems = results.SelectMany(r => r).ToList();
+        _logger.LogDebug("Processed {ChunkNumber} number of Chunks and generated {WorkItemNumber} number of work items", results.Length, workItems.Count);
+
+        return workItems;
     }
 
-    private async Task<List<WorkItemRequest>> ParseChunkAsync(string content)
+    private async Task<List<WorkItemRequest>> ParseChunkAsync(string content, int index)
     {
         var chatClient = _client.GetChatClient(_options.DeploymentName);
 
@@ -106,11 +111,13 @@ Return a JSON object with a 'workItems' array.";
                 PropertyNameCaseInsensitive = true
             });
 
+            _logger.LogDebug("Chat finished using {TokenUsage} tokens, finishing due to {FinishReason} at {ResponseTime}",
+            response.Value.Usage, response.Value.FinishReason, response.Value.CreatedAt);
             return workItems ?? new List<WorkItemRequest>();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"AI parsing failed: {ex.Message}");
+            _logger.LogError(ex, "AI parsing failed for chunk {ChunkIndex}", index);
             throw;
         }
     }
