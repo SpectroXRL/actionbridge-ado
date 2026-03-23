@@ -1,9 +1,7 @@
-
 using ActionBridge_Ado.Api.Models;
 using ActionBridge_Ado.Api.Services.Ado;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace ActionBridge_Ado.Api.Endpoints;
 
@@ -40,7 +38,7 @@ public static class AdoEndpoints
         }
     }
 
-    private static async Task<Ok<IEnumerable<TeamProjectReference>>> GetProjects([FromQuery] string organizationUrl, IAdoService adoService)
+    private static async Task<Ok<IEnumerable<GetProjectsResponse>>> GetProjects([FromQuery] string organizationUrl, IAdoService adoService)
     {
         var projects = await adoService.GetProjectsAsync(organizationUrl);
 

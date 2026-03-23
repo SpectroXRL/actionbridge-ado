@@ -2,11 +2,11 @@ import { useState } from "react";
 import type { WorkItemRequest } from "../../types/WorkItemRequest";
 import { useApi } from "../../utils/useApi";
 
-const project = import.meta.env.VITE_PROJECT;
 const organizationUrl = import.meta.env.VITE_ORGANIZATION_URL;
 
 interface WorkItemsFormProps {
   workItems: WorkItemRequest[];
+  selectedProject: string;
   setWorkItems: React.Dispatch<React.SetStateAction<WorkItemRequest[]>>;
   setMessage: (message: string | null) => void;
   setIsError: (isError: boolean) => void;
@@ -22,6 +22,7 @@ const priorities = [
 
 const WorkItemsForm = ({
   workItems,
+  selectedProject,
   setWorkItems,
   setMessage,
   setIsError,
@@ -39,7 +40,7 @@ const WorkItemsForm = ({
       const token = await getAccessToken();
 
       const response = await fetch(
-        `http://localhost:5277/api/ado/workitems?organizationUrl=${encodeURIComponent(organizationUrl)}&project=${encodeURIComponent(project)}`,
+        `http://localhost:5277/api/ado/workitems?organizationUrl=${encodeURIComponent(organizationUrl)}&project=${encodeURIComponent(selectedProject)}`,
         {
           method: "POST",
           headers: {
