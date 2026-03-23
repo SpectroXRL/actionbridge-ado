@@ -127,7 +127,7 @@ public class AdoService : IAdoService
         return patchDocument;
     }
 
-    public async Task<IEnumerable<TeamProjectReference>> GetProjectsAsync(string organizationUrl)
+    public async Task<IEnumerable<GetProjectsResponse>> GetProjectsAsync(string organizationUrl)
     {
         var uri = new Uri(organizationUrl);
 
@@ -142,7 +142,8 @@ public class AdoService : IAdoService
             var projects = await projectClient.GetProjects();
             _logger.LogInformation("Retrieved {ProjectCount} number of projects", projects.Count);
 
-            return projects;
+            var projectResponse = projects.Select(project => new GetProjectsResponse() { Id = project.Id, Name = project.Name });
+            return projectResponse;
         }
         catch (Exception ex)
         {
