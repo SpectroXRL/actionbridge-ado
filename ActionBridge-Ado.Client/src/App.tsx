@@ -13,18 +13,29 @@ import TranscriptFileUpload from "./components/ado/TranscriptFileUpload";
 import TestFileUpload from "./components/ado/TestFileUpload";
 import { useApi } from "./utils/useApi";
 
+interface Organization {
+  organization: Org;
+  projects: Project[];
+}
+
+interface Org {
+  accountId: string;
+  accountURI: string;
+  accountName: string;
+}
+
 interface Project {
   id: string;
   name: string;
 }
 const App = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [workItems, setWorkItems] = useState<WorkItemRequest[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [selectedProject, setSelectedProject] = useState("");
-  const [isProjectsLoading, setIsProjectsLoading] = useState(false);
-  const organizationUrl = import.meta.env.VITE_ORGANIZATION_URL;
+  const [selectedOrganization, setSelectedOrganization] = useState("");
+  const [isOrganizationsLoading, setIsOrganizationsLoading] = useState(false);
 
   const modifyMessage = (newMessage: string | null) => setMessage(newMessage);
   const modifyWorkItems = (newWorkItems: WorkItemRequest[]) =>
@@ -35,18 +46,32 @@ const App = () => {
     setSelectedProject(e.target.value);
   };
 
+  const handleOrganizationSelection = async (
+    e: ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const newOrgUri = e.target.value;
+    setSelectedOrganization(newOrgUri);
+
+    const org = organizations.find(
+      (org) => org.organization.accountURI === newOrgUri,
+    );
+    if (org && org.projects.length > 0) {
+      setSelectedProject(org.projects[0].name);
+    }
+  };
+
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useApi();
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    async function fetchProjects() {
+    async function fetchOrganizations() {
       try {
-        setIsProjectsLoading(true);
+        setIsOrganizationsLoading(true);
         const token = await getAccessToken();
         const response = await fetch(
-          `http://localhost:5277/api/ado/projects?organizationUrl=${encodeURIComponent(organizationUrl)}`,
+          `http://localhost:5277/api/ado/organizations`,
           {
             method: "GET",
             headers: {
@@ -55,19 +80,22 @@ const App = () => {
           },
         );
 
-        const fetchedProjects: Project[] = await response.json();
-        setProjects(fetchedProjects);
-        if (fetchedProjects.length > 0) {
-          setSelectedProject(fetchedProjects[0].name);
+        const fetchedOrganizations: Organization[] = await response.json();
+        setOrganizations(fetchedOrganizations);
+        if (fetchedOrganizations.length > 0) {
+          setSelectedOrganization(
+            fetchedOrganizations[0].organization.accountURI,
+          );
+          setSelectedProject(fetchedOrganizations[0].projects[0].name);
         }
       } catch (error) {
         console.log(error);
       } finally {
-        setIsProjectsLoading(false);
+        setIsOrganizationsLoading(false);
       }
     }
-    fetchProjects();
-  }, [isAuthenticated, getAccessToken, organizationUrl]);
+    fetchOrganizations();
+  }, [isAuthenticated, getAccessToken]);
 
   return (
     <div className="app-container">
@@ -82,16 +110,44 @@ const App = () => {
       </header>
 
       <AuthenticatedTemplate>
-        {isProjectsLoading ? (
-          <p>Loading Projects...</p>
+        {isOrganizationsLoading ? (
+          <p>Loading Organizations and Projects...</p>
         ) : (
-          <select value={selectedProject} onChange={handleProjectSelection}>
-            {projects.map((project) => (
-              <option key={project.id} value={project.name}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+          <>
+            <select
+              value={selectedOrganization}
+              onChange={handleOrganizationSelection}
+            >
+              {organizations.map((org) => (
+                <option
+                  key={org.organization.accountId}
+                  value={org.organization.accountURI}
+                >
+                  {org.organization.accountName}
+                </option>
+              ))}
+            </select>
+
+            {(() => {
+              const selectedOrg = organizations.find(
+                (org) => org.organization.accountURI === selectedOrganization,
+              );
+              return selectedOrg && selectedOrg.projects.length > 0 ? (
+                <select
+                  value={selectedProject}
+                  onChange={handleProjectSelection}
+                >
+                  {selectedOrg.projects.map((project) => (
+                    <option key={project.id} value={project.name}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p>No projects found</p>
+              );
+            })()}
+          </>
         )}
 
         <TranscriptFileUpload
