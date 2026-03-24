@@ -6,4 +6,5 @@ public interface IAdoService
 {
     Task<WorkItemBatchResponse> CreateWorkItemsBatchAsync(string organizationUrl, string project, List<WorkItemRequest> workItems);
     Task<IEnumerable<GetProjectsResponse>> GetProjectsAsync(string organizationUrl);
+    Task<IEnumerable<GetOrganizationsResponse>> GetOrganizationsAsync();
 }
