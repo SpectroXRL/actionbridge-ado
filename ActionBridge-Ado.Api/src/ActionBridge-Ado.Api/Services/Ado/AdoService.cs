@@ -127,6 +127,49 @@ public class AdoService : IAdoService
         return patchDocument;
     }
 
+    public async Task<IEnumerable<GetOrganizationsResponse>> GetOrganizationsAsync()
+    {
+        var token = await _authService.GetAccessTokenAsync();
+
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        var userResponse = await _httpClient.GetAsync("https://app.vssps.visualstudio.com/_apis/profile/profiles/me?api-version=7.1");
+
+        if (!userResponse.IsSuccessStatusCode)
+        {
+            var error = await userResponse.Content.ReadAsStringAsync();
+            _logger.LogError("Profile request failed: {StatusCode} - {Error}", userResponse.StatusCode, error);
+            throw new Exception($"Profile request failed: {userResponse.StatusCode} - {error}");
+        }
+
+        var userId = (await userResponse.Content.ReadFromJsonAsync<ADOUserResponse>())?.Id;
+
+        var orgResponse = await _httpClient.GetAsync($"https://app.vssps.visualstudio.com/_apis/accounts?memberId={userId}&api-version=7.1");
+        if (!orgResponse.IsSuccessStatusCode)
+        {
+            var error = await userResponse.Content.ReadAsStringAsync();
+            _logger.LogError("Organization request failed: {StatusCode} - {Error}", orgResponse.StatusCode, error);
+            throw new Exception($"Organization request failed: {orgResponse.StatusCode} - {error}");
+        }
+
+        var orgs = await orgResponse.Content.ReadFromJsonAsync<ADOOrgResponse>();
+
+        List<GetOrganizationsResponse> response = [];
+
+        if (orgs != null)
+        {
+            foreach (ADOOrgValue org in orgs.Value)
+            {
+                var projectsUrl = $"https://dev.azure.com/{org.AccountName}";
+                var projects = await GetProjectsAsync(projectsUrl);
+                response.Add(new GetOrganizationsResponse() { Organization = org, Projects = projects.ToList() });
+            }
+        }
+
+        return response;
+    }
+
     public async Task<IEnumerable<GetProjectsResponse>> GetProjectsAsync(string organizationUrl)
     {
         var uri = new Uri(organizationUrl);

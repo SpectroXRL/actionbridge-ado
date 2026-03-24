@@ -12,7 +12,7 @@ public static class AdoEndpoints
         var group = app.MapGroup("/api/ado")
             .RequireAuthorization();
 
-        group.MapGet("/projects", GetProjects).DisableAntiforgery();
+        group.MapGet("/organizations", GetOrganizations);
         group.MapPost("/workitems", CreateWorkItemsAsync).DisableAntiforgery();
     }
 
@@ -38,10 +38,10 @@ public static class AdoEndpoints
         }
     }
 
-    private static async Task<Ok<IEnumerable<GetProjectsResponse>>> GetProjects([FromQuery] string organizationUrl, IAdoService adoService)
+    private static async Task<Ok<IEnumerable<GetOrganizationsResponse>>> GetOrganizations(IAdoService adoService)
     {
-        var projects = await adoService.GetProjectsAsync(organizationUrl);
+        var organizations = await adoService.GetOrganizationsAsync();
 
-        return TypedResults.Ok(projects);
+        return TypedResults.Ok(organizations);
     }
 }
