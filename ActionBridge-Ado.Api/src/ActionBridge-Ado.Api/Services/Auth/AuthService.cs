@@ -21,6 +21,7 @@ public class AuthService : IAuthService
         var clientId = _config["AzureAd:ClientId"];
         var clientSecret = _config["AzureAd:ClientSecret"];
         var tenantId = _config["AzureAd:TenantId"];
+        var redirectUri = _config["Auth:RedirectUri"];
 
         // Get the user's token from the request
         var userToken = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
@@ -36,7 +37,7 @@ public class AuthService : IAuthService
             .Create(clientId)
             .WithClientSecret(clientSecret)
             .WithAuthority($"https://login.microsoftonline.com/{tenantId}")
-            .WithRedirectUri("http://localhost")
+            .WithRedirectUri(redirectUri)
             .Build();
 
         var scopes = new[] { "https://app.vssps.visualstudio.com/.default" };

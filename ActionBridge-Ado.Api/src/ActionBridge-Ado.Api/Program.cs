@@ -32,6 +32,9 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ITranscriptChunker, TranscriptChunker>();
 builder.Services.AddScoped<IAdoService, AdoService>();
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? ["http://localhost:5173"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
