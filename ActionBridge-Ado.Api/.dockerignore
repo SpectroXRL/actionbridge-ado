@@ -1,0 +1,12 @@
+# .dockerignore
+**/bin/
+**/obj/
+**/node_modules/
+**/.git/
+**/.vs/
+**/tests/
+*.md
+.gitignore
+*.sln.DotSettings
+.env
+.env.*
