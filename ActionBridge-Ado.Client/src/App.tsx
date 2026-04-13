@@ -10,7 +10,7 @@ import {
 import { SignInButton } from "./components/auth/SignInButton";
 import { UserProfile } from "./components/auth/UserProfile";
 import TranscriptFileUpload from "./components/ado/TranscriptFileUpload";
-import TestFileUpload from "./components/ado/TestFileUpload";
+//import TestFileUpload from "./components/ado/TestFileUpload";
 import { useApi } from "./utils/useApi";
 
 interface Organization {
@@ -156,13 +156,13 @@ const App = () => {
           setWorkItems={modifyWorkItems}
         />
 
-        {import.meta.env.DEV && (
+        {/* {import.meta.env.DEV && (
           <TestFileUpload
             setMessage={modifyMessage}
             setIsError={modifyIsError}
             setWorkItems={modifyWorkItems}
           />
-        )}
+        )} */}
 
         {message && (
           <div className={`message ${isError ? "error" : "success"}`}>
@@ -172,6 +172,7 @@ const App = () => {
 
         <WorkItemsForm
           workItems={workItems}
+          selectedOrganization={selectedOrganization}
           selectedProject={selectedProject}
           setWorkItems={setWorkItems}
           setMessage={modifyMessage}

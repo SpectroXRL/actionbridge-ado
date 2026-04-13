@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import type { WorkItemRequest } from "../../types/WorkItemRequest";
 import { useApi } from "../../utils/useApi";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 interface TranscriptFileUploadProps {
   setMessage: (message: string | null) => void;
   setIsError: (isError: boolean) => void;
@@ -29,7 +31,7 @@ const TranscriptFileUpload = ({
     try {
       const token = await getAccessToken();
 
-      const response = await fetch(`http://localhost:5277/api/file/upload`, {
+      const response = await fetch(`${apiUrl}/api/file/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
