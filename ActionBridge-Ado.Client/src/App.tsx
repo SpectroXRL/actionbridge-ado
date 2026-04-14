@@ -51,11 +51,11 @@ const App = () => {
   const handleOrganizationSelection = async (
     e: ChangeEvent<HTMLSelectElement>,
   ) => {
-    const newOrgUri = e.target.value;
-    setSelectedOrganization(newOrgUri);
+    const newOrgName = e.target.value;
+    setSelectedOrganization(newOrgName);
 
     const org = organizations.find(
-      (org) => org.organization.accountURI === newOrgUri,
+      (org) => org.organization.accountName === newOrgName,
     );
     if (org && org.projects.length > 0) {
       setSelectedProject(org.projects[0].name);
@@ -120,7 +120,7 @@ const App = () => {
               {organizations.map((org) => (
                 <option
                   key={org.organization.accountId}
-                  value={org.organization.accountURI}
+                  value={org.organization.accountName}
                 >
                   {org.organization.accountName}
                 </option>
@@ -129,7 +129,7 @@ const App = () => {
 
             {(() => {
               const selectedOrg = organizations.find(
-                (org) => org.organization.accountURI === selectedOrganization,
+                (org) => org.organization.accountName === selectedOrganization,
               );
               return selectedOrg && selectedOrg.projects.length > 0 ? (
                 <select
