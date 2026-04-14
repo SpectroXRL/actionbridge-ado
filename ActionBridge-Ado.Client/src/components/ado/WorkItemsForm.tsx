@@ -42,7 +42,7 @@ const WorkItemsForm = ({
       const token = await getAccessToken();
 
       const response = await fetch(
-        `${apiUrl}/api/ado/workitems?organizationUrl=${encodeURIComponent(selectedOrganization)}&project=${encodeURIComponent(selectedProject)}`,
+        `${apiUrl}/api/ado/workitems?organizationUrl=https://dev.azure.com/${selectedOrganization}&project=${encodeURIComponent(selectedProject)}`,
         {
           method: "POST",
           headers: {
