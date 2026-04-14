@@ -13,6 +13,8 @@ import TranscriptFileUpload from "./components/ado/TranscriptFileUpload";
 //import TestFileUpload from "./components/ado/TestFileUpload";
 import { useApi } from "./utils/useApi";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 interface Organization {
   organization: Org;
   projects: Project[];
@@ -70,15 +72,12 @@ const App = () => {
       try {
         setIsOrganizationsLoading(true);
         const token = await getAccessToken();
-        const response = await fetch(
-          `http://localhost:5277/api/ado/organizations`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch(`${apiUrl}/api/ado/organizations`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         const fetchedOrganizations: Organization[] = await response.json();
         setOrganizations(fetchedOrganizations);
