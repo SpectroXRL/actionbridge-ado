@@ -2,6 +2,8 @@ import { useCallback } from "react";
 import { useMsal } from "@azure/msal-react";
 import { apiRequest } from "./authConfig";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 export const useApi = () => {
   const { instance, accounts } = useMsal();
 
@@ -31,7 +33,7 @@ export const useApi = () => {
     async <T,>(endpoint: string, options: RequestInit = {}): Promise<T> => {
       const token = await getAccessToken();
 
-      const response = await fetch(`http://localhost:5277${endpoint}`, {
+      const response = await fetch(`${apiUrl}${endpoint}`, {
         ...options,
         headers: {
           ...options.headers,
