@@ -83,7 +83,7 @@ const App = () => {
         setOrganizations(fetchedOrganizations);
         if (fetchedOrganizations.length > 0) {
           setSelectedOrganization(
-            fetchedOrganizations[0].organization.accountURI,
+            fetchedOrganizations[0].organization.accountName,
           );
           setSelectedProject(fetchedOrganizations[0].projects[0].name);
         }
