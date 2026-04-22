@@ -10,8 +10,8 @@ import {
 import { SignInButton } from "./components/auth/SignInButton";
 import { UserProfile } from "./components/auth/UserProfile";
 import TranscriptFileUpload from "./components/ado/TranscriptFileUpload";
-//import TestFileUpload from "./components/ado/TestFileUpload";
 import { useApi } from "./utils/useApi";
+import TestFileUpload from "./components/ado/TestFileUpload";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -155,13 +155,13 @@ const App = () => {
           setWorkItems={modifyWorkItems}
         />
 
-        {/* {import.meta.env.DEV && (
+        {import.meta.env.DEV && (
           <TestFileUpload
             setMessage={modifyMessage}
             setIsError={modifyIsError}
             setWorkItems={modifyWorkItems}
           />
-        )} */}
+        )}
 
         {message && (
           <div className={`message ${isError ? "error" : "success"}`}>
