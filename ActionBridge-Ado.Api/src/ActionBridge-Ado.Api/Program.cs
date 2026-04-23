@@ -12,6 +12,8 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +46,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+builder.Services.AddHealthChecks();
 
 if (builder.Environment.IsProduction())
 {
@@ -109,5 +113,6 @@ app.UseAuthorization();
 
 app.MapFileEndpoints();
 app.MapAdoEndpoints();
+app.MapHealthChecks("/health");
 
 app.Run();
