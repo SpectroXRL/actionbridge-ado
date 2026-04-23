@@ -113,6 +113,6 @@ app.UseAuthorization();
 
 app.MapFileEndpoints();
 app.MapAdoEndpoints();
-app.MapHealthChecks("/health-actionbridge");
+app.MapHealthChecks("/health");
 
 app.Run();
