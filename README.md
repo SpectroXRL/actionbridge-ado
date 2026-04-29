@@ -299,17 +299,6 @@ actionbridge-ado/
 - **CORS**: The API is configured to allow requests from the React app (localhost:5173 by default).
 - **Input Validation**: File uploads are validated and sanitized.
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### Development Guidelines
-
-1. Follow the existing code style
-2. Write meaningful commit messages
-3. Update documentation as needed
-4. Ensure all tests pass before submitting PR
-
 ## 📝 License
 
 This project is provided as-is for demonstration and development purposes.
