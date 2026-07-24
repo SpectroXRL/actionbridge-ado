@@ -44,9 +44,9 @@ You are an assistant that converts documents into Azure DevOps work items.
 Analyze the provided content and generate a list of work items.
 
 Each work item should have:
-- Title: A concise title for the task/story/bug
+- Title: A concise title for the task/issue/epic
 - Description: Detailed description of the work
-- Type: One of 'Task', 'User Story', 'Bug', 'Epic', or 'Feature'
+- Type: One of 'Task', 'Issue', or 'Epic'
 - Tags: Comma-separated relevant tags (optional)
 - Priority: 1 (Critical), 2 (High), 3 (Medium), or 4 (Low)
 - AcceptanceCriteria: Clear criteria for completion (optional)
